@@ -19,6 +19,52 @@ pageContainer.Position = UDim2.new(0, 0, 0, 30)
 pageContainer.BackgroundTransparency = 1
 pageContainer.Parent = mainInstance
 
+-- Add the controller instance (button with "J")
+local controllerInstance = Instance.new("TextButton")
+controllerInstance.Size = UDim2.new(0, 50, 0, 50)
+controllerInstance.Position = UDim2.new(0, 20, 0, 20) -- Initial position
+controllerInstance.BackgroundColor3 = Color3.new(0, 0, 0) -- Black
+controllerInstance.Text = "J"
+controllerInstance.TextColor3 = Color3.new(1, 1, 1) -- White
+controllerInstance.Font = Enum.Font.SourceSansBold
+controllerInstance.TextSize = 24
+controllerInstance.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Toggle the visibility of the main instance when the controller is clicked
+controllerInstance.MouseButton1Click:Connect(function()
+    mainInstance.Visible = not mainInstance.Visible
+end)
+
+-- Make the controller draggable
+local dragging = false
+local dragStartPos, startPos
+
+controllerInstance.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStartPos = input.Position
+        startPos = controllerInstance.Position
+    end
+end)
+
+controllerInstance.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStartPos
+        controllerInstance.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+controllerInstance.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
 -- Configuration for pages and buttons
 local pagesConfig = {
     {
